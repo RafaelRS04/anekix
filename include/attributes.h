@@ -7,7 +7,7 @@
 #define ATTRIBUTES_H
 
 #define ALIGNED(alignment) __attribute__((__aligned__(alignment)))
-#define SECTION(section) __attribute__((__section_(section)))
+#define SECTION(section) __attribute__((__section__(section)))
 #define NO_RETURN __attribute__((noreturn))
 #define PACKED __attribute__((packed))
 
