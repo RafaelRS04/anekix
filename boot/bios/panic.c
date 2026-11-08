@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2026 Rafael Rodrigues Sanches.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include <x64/assembly.h>
+#include <debug.h>
+
+#include "panic.h"
+
+/*
+ * Print to debug port and halt execution
+ */
+NO_RETURN void panic(const char *message) {
+   outb(DEBUG_PORT, '\n');
+
+   while(*message != '\0') {
+      outb(DEBUG_PORT, *message);
+      message++;
+   }
+
+   cli();
+   halt();
+
+   UNREACHEABLE();
+}

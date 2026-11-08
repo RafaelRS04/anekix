@@ -9,15 +9,15 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-typedef unsigned long long u64;
+typedef unsigned long u64;
 
 typedef signed char i8;
 typedef signed short i16;
 typedef signed int i32;
-typedef signed long long i64;
+typedef signed long i64;
 
 #define ASSERT_SIZE(type, size) \
-    _Static_assert(sizeof(type) == size, "Expected " #type " to have " #size " bytes")
+    static_assert(sizeof(type) == size, "Expected " #type " to have " #size " bytes")
 
 ASSERT_SIZE(u8, 1);
 ASSERT_SIZE(i8, 1);

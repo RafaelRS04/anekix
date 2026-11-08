@@ -3,21 +3,29 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-OUTPUT_FORMAT(binary)
+OUTPUT_FORMAT(elf64-x86-64)
+OUTPUT_ARCH(i386:x86-64)
 
-ENTRY(load_kernel)
+ENTRY(_start)
 
 SECTIONS {
-    . = 0x7E00;
+    . = 0xFFFFFFFF80000000;
+
+    .boot_info : AT(0x200000) {
+        KEEP(*(.boot_info))
+    }
+
+    . = ALIGN(0x1000);
 
     .text : {
-        *(.entry)
         *(.text*)
     }
 
     .rodata : {
         *(.rodata*)
     }
+
+    . = ALIGN(0x1000);
 
     .data : {
         *(.data*)
@@ -26,4 +34,6 @@ SECTIONS {
     .bss : {
         *(.bss*)
     }
+
+    . = ALIGN(0x1000);
 }

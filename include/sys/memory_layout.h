@@ -15,6 +15,10 @@
 #define KERNEL_LOAD_ADDRESS 0x200000
 #define MMIO_HOLE_BASE 0xC0000000
 
+#define KERNEL_STACK_SIZE 0x2000
+
+#define SYMBOL_PA(va) ((u64)(va) - KERNEL_MAP_BASE + KERNEL_LOAD_ADDRESS)
+
 #define VA(pa) ((void *)((u64)(pa) + DIRECT_MAP_BASE))
 #define PA(va) ((u64)(va) - DIRECT_MAP_BASE)
 

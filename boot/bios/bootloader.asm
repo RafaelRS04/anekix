@@ -24,6 +24,9 @@ STAGE2_MAX_SIZE equ 31744
     %error "Stage 2 is longer than expected"
 %endif
 
+; First kernel sector on disk
+KERNEL_SECTOR equ STAGE2_SECTORS + 1
+
 ; BootSector load address
 org 0x7C00
 
@@ -32,10 +35,10 @@ bits 16
 ; Disable interrupts and perform a far jump to clear CS
 start:
     cli
-    jmp 0x0000:.clear_segment_selectors
+    jmp 0x0000:.clear_segment_registers
 
 ; Initialize segment registers and re-enable interrupts
-.clear_segment_selectors:
+.clear_segment_registers:
     xor ax, ax
     mov ds, ax
     mov es, ax
@@ -70,10 +73,10 @@ start:
 
 ; Build identity paging for first 4MB
 .build_page_maps:
-    mov dword [PML4], BASE_PAGE_ENTRY(PML3)
-    mov dword [PML3], BASE_PAGE_ENTRY(PML2)
+    mov dword [PML4], PAGE_ENTRY(PML3)
+    mov dword [PML3], PAGE_ENTRY(PML2)
     mov dword [PML2], LARGE_PAGE_ENTRY(0x000000)
-    mov dword [PML2+PAGE_MAP_ENTRY_SIZE], LARGE_PAGE_ENTRY(0x200000)
+    mov dword [PML2+8], LARGE_PAGE_ENTRY(0x200000)
 
 ; Prepare to switch directly to 64-bit Long Mode
 .enter_long_mode:
@@ -84,7 +87,7 @@ start:
     mov cr4, eax
 
     mov eax, PML4
-    mov cr3, eax            ; Set PML4 as root page map
+    mov cr3, eax            ; Load PML4 physical address
 
     mov ecx, IA32_EFER_MSR  ; Select Extended Feature Enabled Register
     rdmsr
@@ -101,7 +104,7 @@ start:
 
 bits 64
 
-; Setup stack and segment selectors
+; Set up stack and segment registers
 long_mode:
     mov ax, GDT.Data
     mov ds, ax
@@ -110,11 +113,12 @@ long_mode:
     mov gs, ax
     mov ss, ax
 
-    mov ebp, 0
+    xor ebp, ebp
     mov esp, 0x7c00
 
 ; Call Stage 2 entry point
 .call_stage2:
+    mov edi, KERNEL_SECTOR
     call load_kernel
 
 ; GDT with 64-bit segment descriptors
