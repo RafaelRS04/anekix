@@ -8,11 +8,13 @@
 
 #include "panic.h"
 
+static const char prefix[] = "\nBIOS Bootloader Panic: ";
+
 /*
  * Print to debug port and halt execution
  */
 NO_RETURN void panic(const char *message) {
-   outb(DEBUG_PORT, '\n');
+   outsb(DEBUG_PORT, prefix, sizeof prefix);
 
    while(*message != '\0') {
       outb(DEBUG_PORT, *message);
