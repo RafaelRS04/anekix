@@ -19,7 +19,7 @@ typedef struct {
 } Range;
 
 typedef struct PACKED {
-    u64 rsdp_address;
+    u64 acpi_rsdp_address;
     u64 free_ranges_count;
     Range free_memory[MAX_RANGES];
 } BootInfo;

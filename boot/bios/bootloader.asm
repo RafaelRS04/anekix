@@ -30,6 +30,9 @@ KERNEL_SECTOR equ STAGE2_SECTORS + 1
 ; BootSector load address
 org 0x7C00
 
+; Use Absolute Addressing by default
+default abs
+
 bits 16
 
 ; Disable interrupts and perform a far jump to clear CS
@@ -112,13 +115,19 @@ long_mode:
     mov fs, ax
     mov gs, ax
     mov ss, ax
-
     xor ebp, ebp
     mov esp, 0x7c00
 
 ; Call Stage 2 entry point
 .call_stage2:
-    mov edi, KERNEL_SECTOR
+
+    ; EBDA (Extended BIOS Data Area) address
+    movzx rdi, word [0x40E]
+    shl rdi, 4
+
+    ; First kernel sector on boot disk
+    mov esi, KERNEL_SECTOR
+
     call load_kernel
 
 ; GDT with 64-bit segment descriptors

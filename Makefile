@@ -94,7 +94,7 @@ QEMU_MEMORY ?= 128M
 
 QEMU_ACCEL = -accel kvm -accel tcg
 QEMU_GRAPHIC = -nographic
-QEMU_MACHINE = -M pc -global cpu.la57=off
+QEMU_MACHINE = -M pc,max-ram-below-4g=3G -global cpu.la57=off
 QEMU_DEBUGCON = -debugcon file:/dev/stdout
 
 QEMU_OPTIONS = $(QEMU_MACHINE) $(QEMU_ACCEL) -smp $(QEMU_CPUS) -m $(QEMU_MEMORY) $(QEMU_GRAPHIC) $(QEMU_DEBUGCON)

@@ -94,7 +94,7 @@ Elf load_elf_headers(u32 kernel_sector, void *buffer) {
 
    read_disk_sector(buffer, kernel_sector);
 
-   Elf elf = { kernel_sector, buffer, nullptr };
+   Elf elf = { kernel_sector, buffer, NULL };
    parse_elf_header(&elf);
 
    return elf;
