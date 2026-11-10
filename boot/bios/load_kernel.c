@@ -9,6 +9,8 @@
 #include <sys/types.h>
 
 #include "elf_loader.h"
+#include "panic.h"
+#include "e820.h"
 
 /* Free memory above the first 64KB used by bootloader */
 #define ELF_HEADERS_BUFFER ((void*)0x10000)
@@ -64,9 +66,62 @@ static u64 find_acpi_rsdp(u64 ebda) {
    return NULL;
 }
 
+/*
+ * Map e820 entry type to Anekix memory region type
+ */
+static u64 convert_e820_type(u32 e820_type) {
+   switch(e820_type) {
+   case E820_RAM_TYPE:
+      return ANEKIX_USABLE_MEMORY;
+   case E820_RESERVED_TYPE:
+   case E820_ACPI_TYPE:
+   case E820_NVS_TYPE:
+      return ANEKIX_UNUSABLE_MEMORY;
+   default:
+      return ANEKIX_IGNORED_MEMORY;
+   }
+}
+
+/*
+ * Insert memory region into boot info
+ */
+static void insert_memory_region(BootInfo *boot_info, MemoryRegion region) {
+   if(boot_info->region_count >= BOOT_INFO_MAX_REGIONS) {
+      panic("too many memory regions to insert into boot info!");
+   }
+
+   u64 index = boot_info->region_count;
+   boot_info->regions[index] = region;
+   boot_info->region_count++;
+}
+
+/*
+ * Populate boot info memory regions using e820 map entries
+ */
+static void populate_memory_regions_from_e820(BootInfo *boot_info) {
+   E820Table *e820_table = E820_TABLE_BUFFER;
+   boot_info->region_count = 0;
+
+   if(e820_table->entry_count > E820_MAX_ENTRIES) {
+      panic("e820 entry count is greater than expected!");
+   }
+
+   for(u32 i = 0; i < e820_table->entry_count; i++) {
+      E820Entry entry = e820_table->entries[i];
+
+      MemoryRegion region = {
+         .address = entry.base_address,
+         .size = entry.size,
+         .type = convert_e820_type(entry.type)
+      };
+
+      insert_memory_region(boot_info, region);
+   }
+}
+
 SECTION(".entry")
-NO_RETURN void load_kernel(u64 ebda, u32 kernel_sector) {
-   BootInfo *boot_info = (void*)KERNEL_LOAD_ADDRESS;
+NO_RETURN void load_kernel(u32 kernel_sector, u64 ebda) {
+   BootInfo *boot_info = BOOT_INFO_PHYSICAL_ADDRESS;
    ElfEntry kernel_entry;
    Elf elf;
 
@@ -74,6 +129,7 @@ NO_RETURN void load_kernel(u64 ebda, u32 kernel_sector) {
    load_elf(&elf);
 
    boot_info->acpi_rsdp_address = find_acpi_rsdp(ebda);
+   populate_memory_regions_from_e820(boot_info);
 
    kernel_entry = (ElfEntry)elf.header->entry;
    kernel_entry();

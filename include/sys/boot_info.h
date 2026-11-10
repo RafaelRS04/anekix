@@ -10,18 +10,13 @@
 #include <attributes.h>
 #include <sys/memory_layout.h>
 
-#define BOOT_INFO_PHYSICAL_ADDRESS KERNEL_LOAD_ADDRESS
-#define MAX_RANGES 128
-
-typedef struct {
-    u64 start;
-    u64 end;
-} Range;
+#define BOOT_INFO_PHYSICAL_ADDRESS ((void*)KERNEL_LOAD_ADDRESS)
+#define BOOT_INFO_MAX_REGIONS 128
 
 typedef struct PACKED {
     u64 acpi_rsdp_address;
-    u64 free_ranges_count;
-    Range free_memory[MAX_RANGES];
+    u64 region_count;
+    MemoryRegion regions[BOOT_INFO_MAX_REGIONS];
 } BootInfo;
 
 #endif /* SYS_BOOT_INFO_H */
