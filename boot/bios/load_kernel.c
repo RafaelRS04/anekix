@@ -8,12 +8,12 @@
 #include <attributes.h>
 #include <sys/types.h>
 
-#include "elf_loader.h"
+#include "kernel_elf.h"
 #include "panic.h"
 #include "e820.h"
 
 /* Free memory above the first 64KB used by bootloader */
-#define ELF_HEADERS_BUFFER ((void*)0x10000)
+#define SCRATCH_AREA ((void*)0x10000)
 
 /*
  * Verify the Root System Descriptor Pointer signature
@@ -85,13 +85,13 @@ static u64 convert_e820_type(u32 e820_type) {
 /*
  * Insert memory region into boot info
  */
-static void insert_memory_region(BootInfo *boot_info, MemoryRegion region) {
+static void insert_memory_region(BootInfo *boot_info, const MemoryRegion *region) {
    if(boot_info->region_count >= BOOT_INFO_MAX_REGIONS) {
       panic("too many memory regions to insert into boot info!");
    }
 
    u64 index = boot_info->region_count;
-   boot_info->regions[index] = region;
+   boot_info->regions[index] = *region;
    boot_info->region_count++;
 }
 
@@ -115,22 +115,22 @@ static void populate_memory_regions_from_e820(BootInfo *boot_info) {
          .type = convert_e820_type(entry.type)
       };
 
-      insert_memory_region(boot_info, region);
+      insert_memory_region(boot_info, &region);
    }
 }
 
 SECTION(".entry")
 NO_RETURN void load_kernel(u32 kernel_sector, u64 ebda) {
    BootInfo *boot_info = BOOT_INFO_PHYSICAL_ADDRESS;
-   ElfEntry kernel_entry;
-   Elf elf;
+   KernelEntry kernel_entry;
+   KernelElf *elf;
 
-   elf = load_elf_headers(kernel_sector, ELF_HEADERS_BUFFER);
-   load_elf(&elf);
+   elf = load_kernel_elf_headers(SCRATCH_AREA, kernel_sector);
+   load_kernel_elf_binary(elf);
 
    boot_info->acpi_rsdp_address = find_acpi_rsdp(ebda);
    populate_memory_regions_from_e820(boot_info);
 
-   kernel_entry = (ElfEntry)elf.header->entry;
+   kernel_entry = (KernelEntry)elf->header.entry;
    kernel_entry();
 }
