@@ -21,8 +21,5 @@ NO_RETURN void panic(const char *message) {
       message++;
    }
 
-   cli();
-   halt();
-
-   UNREACHEABLE();
+   freeze();
 }

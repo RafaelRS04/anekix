@@ -13,6 +13,5 @@ BootInfo boot_info;
 
 NO_RETURN void main(void) {
     outsb(DEBUG_PORT, (char*)boot_info.acpi_rsdp_address, 8);
-    halt();
-    UNREACHEABLE();
+    freeze();
 }

@@ -6,6 +6,7 @@
 #ifndef X64_ASSEMBLY_H
 #define X64_ASSEMBLY_H
 
+#include <attributes.h>
 #include <sys/types.h>
 
 #define ASM __asm__
@@ -210,6 +211,14 @@ static inline void halt(void) {
  */
 static inline void load_cr3(u64 pml4) {
     ASM volatile("mov cr3, %0" : : "r" (pml4) : "memory");
+}
+
+/*
+ * Disable interrupts and HALT execution forever
+ */
+static inline NO_RETURN void freeze(void) {
+    ASM volatile("cli; 1: hlt; jmp 1b" : : : "memory");
+    UNREACHEABLE();
 }
 
 #endif /* X64_ASSEMBLY_H */
