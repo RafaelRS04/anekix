@@ -69,9 +69,13 @@ ANEKIX_UEFI_IMAGE = $(ANEKIX_UEFI_PARTITION)/anekix.elf
 
 #################################################### PHONY TARGETS ####################################################
 
-.PHONY: all clean
+.PHONY: all bios uefi clean
 
 all: $(ANEKIX_BIOS_IMAGE) $(ANEKIX_UEFI_IMAGE)
+
+bios: $(ANEKIX_BIOS_IMAGE)
+
+uefi: $(ANEKIX_UEFI_IMAGE)
 
 clean:
 	rm -rf $(BUILD_FOLDER)
