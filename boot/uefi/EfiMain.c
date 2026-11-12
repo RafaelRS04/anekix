@@ -22,7 +22,7 @@ EFI_STATUS EfiMain(
 
     InitializeLib(ImageHandle, SystemTable);
 
-    AllocateKernelSpace();
+    AllocateKernelPages();
     GetFileProtocol(&FileSystem);
     LoadFile(FileSystem, L"anekix.elf", &FileBuffer);
     LoadKernelElfBinary(FileBuffer, &KernelEntry);

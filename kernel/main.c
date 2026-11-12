@@ -6,12 +6,13 @@
 #include <sys/boot_info.h>
 #include <x64/assembly.h>
 #include <attributes.h>
-#include <debug.h>
+
+#include "drivers/8259_pic.h"
 
 SECTION(".boot_info")
 BootInfo boot_info;
 
 NO_RETURN void main(void) {
-    outsb(DEBUG_PORT, "On kernel again\n", 17);
+    pic_disable();
     freeze();
 }

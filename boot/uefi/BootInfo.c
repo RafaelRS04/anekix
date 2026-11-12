@@ -131,6 +131,9 @@ STATIC VOID InsertMemoryRegion(
     }
 }
 
+/*
+ * Fill boot info with RSDP and memory map
+ */
 VOID FillBootInfo(
     OUT UINTN *MapKey
 ) {

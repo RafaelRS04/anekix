@@ -26,7 +26,7 @@ STATIC BOOLEAN IsElf(
 /*
  * Allocate pages for kernel
  */
-VOID AllocateKernelSpace(VOID) {
+VOID AllocateKernelPages(VOID) {
     EFI_PHYSICAL_ADDRESS Location = KERNEL_LOAD_ADDRESS;
 
     CheckStatus(

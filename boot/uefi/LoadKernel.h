@@ -11,7 +11,7 @@
 
 typedef NO_RETURN void (*KERNEL_ENTRY)(void);
 
-VOID AllocateKernelSpace(VOID);
+VOID AllocateKernelPages(VOID);
 
 VOID LoadKernelElfBinary(
     IN VOID *FileBuffer,
