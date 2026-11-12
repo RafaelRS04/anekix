@@ -121,7 +121,7 @@ static void populate_memory_regions_from_e820(BootInfo *boot_info) {
 
 SECTION(".entry")
 NO_RETURN void load_kernel(u32 kernel_sector, u64 ebda) {
-   BootInfo *boot_info = BOOT_INFO_PHYSICAL_ADDRESS;
+   BootInfo *boot_info = BOOT_INFO_PHYSICAL_BUFFER;
    KernelEntry kernel_entry;
    KernelElf *elf;
 

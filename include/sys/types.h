@@ -6,7 +6,9 @@
 #ifndef SYS_TYPES_H
 #define SYS_TYPES_H
 
+#ifndef NULL
 #define NULL 0
+#endif
 
 typedef unsigned char u8;
 typedef unsigned short u16;

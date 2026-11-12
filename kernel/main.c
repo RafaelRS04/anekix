@@ -12,6 +12,6 @@ SECTION(".boot_info")
 BootInfo boot_info;
 
 NO_RETURN void main(void) {
-    outsb(DEBUG_PORT, (char*)boot_info.acpi_rsdp_address, 8);
+    outsb(DEBUG_PORT, "On kernel again\n", 17);
     freeze();
 }

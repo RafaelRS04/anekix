@@ -28,7 +28,7 @@ EFI_CFLAGS = -fno-stack-protector -fno-stack-check -ffreestanding -fshort-wchar 
 EFI_CFLAGS += -mno-red-zone -maccumulate-outgoing-args -DGNU_EFI_USE_MS_ABI
 EFI_CFLAGS += -Werror -Wall -O2 -std=c23 -pedantic
 
-EFI_LDFLAGS = -shared -Bsymbolic -z noexecstack
+EFI_LDFLAGS = -shared -Bsymbolic -z noexecstack --defsym=efi_main=EfiMain
 EFI_LIBRARIES = -lgnuefi -lefi
 
 EFI_OBJCOPY_FLAGS = -j .text -j .sdata -j .data -j .rodata -j .dynamic -j .dynsym

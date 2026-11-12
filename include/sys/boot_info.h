@@ -7,13 +7,12 @@
 #define SYS_BOOT_INFO_H
 
 #include <sys/types.h>
-#include <attributes.h>
 #include <sys/memory_layout.h>
 
-#define BOOT_INFO_PHYSICAL_ADDRESS ((void*)KERNEL_LOAD_ADDRESS)
+#define BOOT_INFO_PHYSICAL_BUFFER ((void*)KERNEL_LOAD_ADDRESS)
 #define BOOT_INFO_MAX_REGIONS 128
 
-typedef struct PACKED {
+typedef struct {
     u64 acpi_rsdp_address;
     u64 region_count;
     MemoryRegion regions[BOOT_INFO_MAX_REGIONS];

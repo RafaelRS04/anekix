@@ -21,5 +21,7 @@ NO_RETURN void panic(const char *message) {
       message++;
    }
 
+   outb(DEBUG_PORT, '\n');
+
    freeze();
 }
