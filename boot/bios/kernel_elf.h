@@ -14,9 +14,9 @@
 #define MAX_ELF_PROGRAM_HEADERS 8
 
 typedef struct {
-   u32 kernel_sector;
-   Elf64Header header;
-   Elf64ProgramHeader phdrs[MAX_ELF_PROGRAM_HEADERS];
+    u32 kernel_sector;
+    Elf64Header header;
+    Elf64ProgramHeader phdrs[MAX_ELF_PROGRAM_HEADERS];
 } KernelElf;
 
 typedef NO_RETURN void (*KernelEntry)(void);

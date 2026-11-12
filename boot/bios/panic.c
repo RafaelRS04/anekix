@@ -14,14 +14,14 @@ static const char prefix[] = "\nBIOS Bootloader Panic: ";
  * Print to debug port and halt execution
  */
 NO_RETURN void panic(const char *message) {
-   outsb(DEBUG_PORT, prefix, sizeof prefix);
+    outsb(DEBUG_PORT, prefix, sizeof prefix);
 
-   while(*message != '\0') {
-      outb(DEBUG_PORT, *message);
-      message++;
-   }
+    while(*message != '\0') {
+        outb(DEBUG_PORT, *message);
+        message++;
+    }
 
-   outb(DEBUG_PORT, '\n');
+    outb(DEBUG_PORT, '\n');
 
-   freeze();
+    freeze();
 }
