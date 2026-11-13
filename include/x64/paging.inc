@@ -21,21 +21,21 @@ PAGE_SIZE_FLAG equ 1 << 7
         resb 0x1000
 %endmacro
 
-%define PML4_OFFSET(addr) ((((addr) >> 39) & 0x1FF) * 8)
-%define PML3_OFFSET(addr) ((((addr) >> 30) & 0x1FF) * 8)
-%define PML2_OFFSET(addr) ((((addr) >> 21) & 0x1FF) * 8)
-%define PML1_OFFSET(addr) ((((addr) >> 12) & 0x1FF) * 8)
+%define PML4_OFFSET(va) ((((va) >> 39) & 0x1FF) * 8)
+%define PML3_OFFSET(va) ((((va) >> 30) & 0x1FF) * 8)
+%define PML2_OFFSET(va) ((((va) >> 21) & 0x1FF) * 8)
+%define PML1_OFFSET(va) ((((va) >> 12) & 0x1FF) * 8)
 
-%define PAGE_ENTRY(addr, flags) \
-    (((addr) & PAGE_ADDRESS_MASK) | (((flags) & ~PAGE_SIZE_FLAG) & PAGE_FLAGS_MASK))
+%define PAGE_ENTRY(pa, flags) \
+    (((pa) & PAGE_ADDRESS_MASK) | (((flags) & ~PAGE_SIZE_FLAG) & PAGE_FLAGS_MASK))
 
-%define LARGE_PAGE_ENTRY(addr, flags) \
-    (((addr) & LARGE_PAGE_ADDRESS_MASK) | (((flags) | PAGE_SIZE_FLAG) & PAGE_FLAGS_MASK))
+%define LARGE_PAGE_ENTRY(pa, flags) \
+    (((pa) & LARGE_PAGE_ADDRESS_MASK) | (((flags) | PAGE_SIZE_FLAG) & PAGE_FLAGS_MASK))
 
-%define PAGE_ENTRY(addr) \
-    PAGE_ENTRY(addr, PAGE_PRESENT_FLAG | PAGE_WRITE_FLAG)
+%define PAGE_ENTRY(pa) \
+    PAGE_ENTRY(pa, PAGE_PRESENT_FLAG | PAGE_WRITE_FLAG)
 
-%define LARGE_PAGE_ENTRY(addr) \
-    LARGE_PAGE_ENTRY(addr, PAGE_PRESENT_FLAG | PAGE_WRITE_FLAG)
+%define LARGE_PAGE_ENTRY(pa) \
+    LARGE_PAGE_ENTRY(pa, PAGE_PRESENT_FLAG | PAGE_WRITE_FLAG)
 
 %endif

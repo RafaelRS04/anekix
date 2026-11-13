@@ -16,6 +16,7 @@ SECTIONS {
     }
 
     . = ALIGN(0x1000);
+    PROVIDE(kernel_text = .);
 
     .text : {
         *(.text*)
@@ -26,6 +27,7 @@ SECTIONS {
     }
 
     . = ALIGN(0x1000);
+    PROVIDE(kernel_data = .);
 
     .data : {
         *(.data*)
@@ -36,4 +38,5 @@ SECTIONS {
     }
 
     . = ALIGN(0x1000);
+    PROVIDE(kernel_end = .);
 }

@@ -8,6 +8,21 @@
 
 #include <sys/types.h>
 
+/* Is mapped and can be used by allocator */
+#define ANEKIX_USABLE_MEMORY 0
+
+/* Is mapped and can't be used by allocator */
+#define ANEKIX_UNUSABLE_MEMORY 1
+
+/* Isn't mapped and can't be used by allocator */
+#define ANEKIX_IGNORED_MEMORY 2
+
+typedef struct {
+    u64 start;
+    u64 end;
+    u64 type;
+} MemoryRegion;
+
 #define EXTENDED_MEMORY 0x100000
 #define MMIO_HOLE_BASE 0xC0000000
 #define MMIO_HOLE_SIZE 0x40000000
@@ -18,20 +33,10 @@
 #define KERNEL_STACK_SIZE 0x2000
 #define KERNEL_MAX_SIZE 0x200000
 
-#define VA(pa) ((void *)((u64)(pa) + DIRECT_MAP_BASE))
-#define PA(va) ((u64)(va) - DIRECT_MAP_BASE)
-
-#define SYMBOL_VA(symbol) ((void*)((u64)(symbol) - KERNEL_MAP_BASE + DIRECT_MAP_BASE))
 #define SYMBOL_PA(symbol) ((u64)(symbol) - KERNEL_MAP_BASE + KERNEL_LOAD_ADDRESS)
+#define SYMBOL_VA(symbol) ((void*)(SYMBOL_PA(symbol) + DIRECT_MAP_BASE))
 
-#define ANEKIX_USABLE_MEMORY 0
-#define ANEKIX_UNUSABLE_MEMORY 1
-#define ANEKIX_IGNORED_MEMORY 2
-
-typedef struct {
-    u64 start;
-    u64 end;
-    u64 type;
-} MemoryRegion;
+#define VA(pa) ((void*)((u64)(pa) + DIRECT_MAP_BASE))
+#define PA(va) ((u64)(va) - DIRECT_MAP_BASE)
 
 #endif /* SYS_MEMORY_LAYOUT_H */
