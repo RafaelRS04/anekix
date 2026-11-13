@@ -144,7 +144,7 @@ static inline void stosb(void *location, u8 data, u64 count) {
     ASM volatile(
         "cld; rep stosb"
         : "+D" (location), "+c" (count)
-        : "d" (data)
+        : "a" (data)
         : "memory", "cc"
     );
 }
@@ -156,7 +156,7 @@ static inline void stosw(void *location, u16 data, u64 count) {
     ASM volatile(
         "cld; rep stosw"
         : "+D" (location), "+c" (count)
-        : "d" (data)
+        : "a" (data)
         : "memory", "cc"
     );
 }
@@ -168,7 +168,7 @@ static inline void stosd(void *location, u32 data, u64 count) {
     ASM volatile(
         "cld; rep stosd"
         : "+D" (location), "+c" (count)
-        : "d" (data)
+        : "a" (data)
         : "memory", "cc"
     );
 }
@@ -180,7 +180,7 @@ static inline void stosq(void *location, u64 data, u64 count) {
     ASM volatile(
         "cld; rep stosq"
         : "+D" (location), "+c" (count)
-        : "d" (data)
+        : "a" (data)
         : "memory", "cc"
     );
 }
