@@ -12,42 +12,49 @@ default rel
 ; Import main from main.c
 extern main;
 
+; Export early PML4
+global early_pml4
+
 ; Export entry point with physical address
 global _start
 _start equ SYMBOL_PA(entry)
 
 section .text
 
+; Ensure that interrupts are disabled on entry
+entry:
+    cli
+
 ; Create new page maps before jump to kernel
 ; - Identity map: required to not crash
 ; - Direct map: used to map physical memory
 ; - Kernel map: required to run kernel code
-entry:
+build_page_maps:
     mov rdx, PAGE_ADDRESS_MASK
 
 ; Fill PML4 entries
-setup_pml4:
+.setup_pml4:
 
     ; Put Identity PML3 on PML4
     lea rax, [identity_pml3]
     and rax, rdx
     or rax, PAGE_PRESENT_FLAG | PAGE_WRITE_FLAG
-    mov [pml4], rax
+    mov [early_pml4], rax
 
     ; Put Direct PML3 on PML4
     lea rax, [direct_pml3]
     and rax, rdx
     or rax, PAGE_PRESENT_FLAG | PAGE_WRITE_FLAG
-    mov [pml4 + PML4_OFFSET(DIRECT_MAP_BASE)], rax
+    mov [early_pml4 + PML4_OFFSET(DIRECT_MAP_BASE)], rax
 
     ; Put Kernel PML3 on PML4
     lea rax, [kernel_pml3]
     and rax, rdx
     or rax, PAGE_PRESENT_FLAG | PAGE_WRITE_FLAG
-    mov [pml4 + PML4_OFFSET(KERNEL_MAP_BASE)], rax
+    mov [early_pml4 + PML4_OFFSET(KERNEL_MAP_BASE)], rax
 
 ; Fill PML3 entries
-setup_pml3:
+.setup_pml3:
 
     ; Put Identity PML2 on Identity PML3
     lea rax, [identity_pml2]
@@ -68,7 +75,7 @@ setup_pml3:
     mov [kernel_pml3 + PML3_OFFSET(KERNEL_MAP_BASE)], rax
 
 ; Fill PML2 entries
-setup_pml2:
+.setup_pml2:
 
     ; Build identity paging for first 4MB
     mov rax, LARGE_PAGE_ENTRY(0x000000)
@@ -88,7 +95,7 @@ setup_pml2:
 
 ; Switch to the new page maps
 switch_page_maps:
-    lea rax, [pml4]
+    lea rax, [early_pml4]
     mov cr3, rax
 
 ; Set up kernel stack
@@ -104,7 +111,7 @@ jump_main:
 section .bss
 
 ; Reserve memory for page maps
-RESERVE_PAGE_MAP pml4
+RESERVE_PAGE_MAP early_pml4
 RESERVE_PAGE_MAP identity_pml3
 RESERVE_PAGE_MAP identity_pml2
 RESERVE_PAGE_MAP direct_pml3
