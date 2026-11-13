@@ -39,4 +39,7 @@ typedef struct {
 #define VA(pa) ((void*)((u64)(pa) + DIRECT_MAP_BASE))
 #define PA(va) ((u64)(va) - DIRECT_MAP_BASE)
 
+#define IS_FROM_DIRECT_MAP(va) ((u64)va >= DIRECT_MAP_BASE && (u64)va < KERNEL_MAP_BASE)
+#define IS_FROM_KERNEL_MAP(va) ((u64)va >= KERNEL_MAP_BASE)
+
 #endif /* SYS_MEMORY_LAYOUT_H */

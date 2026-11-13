@@ -73,6 +73,14 @@ void kfree(void *vaddress) {
         panic("Misaligned pointer passed to kfree!");
     }
 
+    if(IS_FROM_KERNEL_MAP(vaddress)) {
+        panic("Kernel map pointer passed to kfree!");
+    }
+
+    if(!IS_FROM_DIRECT_MAP(vaddress)) {
+        panic("Invalid pointer passed to kfree!");
+    }
+
     memset(vaddress, POISON_FREE, PAGE_SIZE);
 
     head->next = free_list;
