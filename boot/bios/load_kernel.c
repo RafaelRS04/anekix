@@ -110,8 +110,8 @@ static void populate_memory_regions_from_e820(BootInfo *boot_info) {
         E820Entry entry = e820_table->entries[i];
 
         MemoryRegion region = {
-            .address = entry.base_address,
-            .size = entry.size,
+            .start = entry.base_address,
+            .end = entry.base_address + entry.size,
             .type = convert_e820_type(entry.type)
         };
 

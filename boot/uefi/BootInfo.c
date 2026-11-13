@@ -83,6 +83,16 @@ STATIC UINT64 ConvertEfiMemoryType(
 }
 
 /*
+ * Get memory descriptor end address
+ */
+STATIC UINT64 GetDescriptorEnd(
+    IN EFI_MEMORY_DESCRIPTOR *Descriptor
+) {
+    UINT64 Size = Descriptor->NumberOfPages * EFI_PAGE_SIZE;
+    return Descriptor->PhysicalStart + Size;
+}
+
+/*
  * Try to merge a memory region from descriptor into boot info
  */
 STATIC BOOLEAN MergeMemoryRegion(
@@ -94,10 +104,9 @@ STATIC BOOLEAN MergeMemoryRegion(
 
     for(UINTN i = 0; i < Count; i++) {
         MemoryRegion *region = &boot_info->regions[i];
-        UINT64 RegionEnd = region->address + region->size;
 
-        if(region->type == Type && Descriptor->PhysicalStart == RegionEnd) {
-            region->size += Descriptor->NumberOfPages * EFI_PAGE_SIZE;
+        if(region->type == Type && Descriptor->PhysicalStart == region->end) {
+            region->end = GetDescriptorEnd(Descriptor);
             return TRUE;
         }
     }
@@ -123,8 +132,8 @@ STATIC VOID InsertMemoryRegion(
         UINT64 Index = boot_info->region_count;
         MemoryRegion *region = &boot_info->regions[Index];
 
-        region->address = Descriptor->PhysicalStart;
-        region->size = Descriptor->NumberOfPages * EFI_PAGE_SIZE;
+        region->start = Descriptor->PhysicalStart;
+        region->end = GetDescriptorEnd(Descriptor);
         region->type = ConvertEfiMemoryType(Descriptor->Type);
 
         boot_info->region_count++;

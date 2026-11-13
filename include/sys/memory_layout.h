@@ -29,8 +29,8 @@
 #define ANEKIX_IGNORED_MEMORY 2
 
 typedef struct {
-    u64 address;
-    u64 size;
+    u64 start;
+    u64 end;
     u64 type;
 } MemoryRegion;
 
